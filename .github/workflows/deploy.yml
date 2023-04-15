@@ -1,0 +1,23 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and deploy
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.REMOTE_ID }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          script: |
+            pm2 kill
+            cd berkebot
+            git fetch --all
+            git pull  
+            pm2 start index.js --name berkebot
