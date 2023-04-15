@@ -91,7 +91,7 @@ client.on("interactionCreate", (interaction) => {
     playAudio(interaction, interaction.commandName);
   }
 });
-
+// test
 client.on("messageCreate", async (message) => {
   try {
     if (message.author.bot) return;
