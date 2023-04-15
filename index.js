@@ -4,8 +4,17 @@ const discordKey = process.env["DiscordKey"];
 const openAiOrg = process.env["OpenAIOrg"];
 const CLIENT_ID = process.env["CLIENT_ID"];
 const GUILD_ID = process.env["GUILD_ID"];
+const fs = require("fs");
 
-console.log(discordKey);
+let voices = [];
+
+const directory = fs.opendirSync("./voices");
+
+while ((file = directory.readSync()) !== null) {
+  const dotIndex = file.name.indexOf(".");
+
+  voices.push(file.name.slice(0, dotIndex));
+}
 
 const { Client, GatewayIntentBits, Routes } = require("discord.js");
 const {
@@ -27,27 +36,11 @@ const client = new Client({
 
 const rest = new REST({ version: "10" }).setToken(discordKey);
 
-const bunadamıCommand = new SlashCommandBuilder()
-  .setName("bunadamı")
-  .setDescription("bunada mı içerledin?");
-const durCommand = new SlashCommandBuilder()
-  .setName("dur")
-  .setDescription("DUR!");
-const amaYaniCommand = new SlashCommandBuilder()
-  .setName("amayani")
-  .setDescription("AMAYAAAAAAAANİ");
-const simdiTaluCommand = new SlashCommandBuilder()
-  .setName("simditalu")
-  .setDescription("Şimdi taleee?");
-const ercemCommand = new SlashCommandBuilder()
-  .setName("ercem")
-  .setDescription("ne alakası var jesters privilege bu");
-const tiranKalin = new SlashCommandBuilder()
-  .setName("tirankalın")
-  .setDescription("Tiran kalın");
-const tiranInce = new SlashCommandBuilder()
-  .setName("tiranince")
-  .setDescription("Tiran ince");
+function buildSlashCommands() {
+  return voices.map((voice) =>
+    new SlashCommandBuilder().setName(voice).setDescription("desc")
+  );
+}
 
 const player = createAudioPlayer();
 
@@ -93,28 +86,7 @@ const openai = new OpenAIApi(configuration);
 
 client.on("interactionCreate", (interaction) => {
   if (interaction.isChatInputCommand()) {
-    if (interaction.commandName === "bunadamı") {
-      playAudio(interaction, "bunadamı");
-    }
-    if (interaction.commandName === "amayani") {
-      playAudio(interaction, "amayani");
-    }
-
-    if (interaction.commandName === "dur") {
-      playAudio(interaction, "dur");
-    }
-    if (interaction.commandName === "simditalu") {
-      playAudio(interaction, "simditalu");
-    }
-    if (interaction.commandName === "ercem") {
-      playAudio(interaction, "ercem");
-    }
-    if (interaction.commandName === "tiranince") {
-      playAudio(interaction, "tiranince");
-    }
-    if (interaction.commandName === "tirankalın") {
-      playAudio(interaction, "tirankalın");
-    }
+    playAudio(interaction.commandName);
   }
 });
 
@@ -144,15 +116,8 @@ client.on("messageCreate", async (message) => {
 });
 
 async function main() {
-  const commands = [
-    bunadamıCommand.toJSON(),
-    durCommand.toJSON(),
-    amaYaniCommand.toJSON(),
-    simdiTaluCommand.toJSON(),
-    ercemCommand.toJSON(),
-    tiranKalin.toJSON(),
-    tiranInce.toJSON(),
-  ];
+  const commands = buildSlashCommands().map((command) => command.toJSON());
+
   try {
     console.log("Started refreshing application (/) commands.");
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
