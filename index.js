@@ -4,6 +4,9 @@ const discordKey = process.env["DiscordKey"];
 const openAiOrg = process.env["OpenAIOrg"];
 const CLIENT_ID = process.env["CLIENT_ID"];
 const GUILD_ID = process.env["GUILD_ID"];
+
+console.log(discordKey);
+
 const { Client, GatewayIntentBits, Routes } = require("discord.js");
 const {
   joinVoiceChannel,
