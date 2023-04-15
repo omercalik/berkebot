@@ -58,7 +58,9 @@ const playAudio = (interaction, command) => {
     const voiceChannel = interaction.member.voice.channel;
 
     if (voiceChannel) {
-      let resource = createAudioResource(join(__dirname, `${command}.mp3`));
+      let resource = createAudioResource(
+        join(__dirname, `/voices/${command}.mp3`)
+      );
       player.play(resource);
 
       const connection = joinVoiceChannel({
