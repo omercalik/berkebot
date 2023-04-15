@@ -86,7 +86,7 @@ const openai = new OpenAIApi(configuration);
 
 client.on("interactionCreate", (interaction) => {
   if (interaction.isChatInputCommand()) {
-    playAudio(interaction.commandName);
+    playAudio(interaction, interaction.commandName);
   }
 });
 
