@@ -1,20 +1,6 @@
 require("dotenv").config();
-const openApiKey = process.env["OpenAPIKey"];
-const discordKey = process.env["DiscordKey"];
-const openAiOrg = process.env["OpenAIOrg"];
-const CLIENT_ID = process.env["CLIENT_ID"];
-const GUILD_ID = process.env["GUILD_ID"];
-const fs = require("fs");
 
-let voices = [];
-
-const directory = fs.opendirSync("./voices");
-
-while ((file = directory.readSync()) !== null) {
-  const dotIndex = file.name.indexOf(".");
-
-  voices.push(file.name.slice(0, dotIndex));
-}
+const { Configuration, OpenAIApi } = require("openai");
 
 const { Client, GatewayIntentBits, Routes } = require("discord.js");
 const {
@@ -25,6 +11,24 @@ const {
 const { join } = require("node:path");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { REST } = require("@discordjs/rest");
+
+const directory = fs.opendirSync("./voices");
+
+const openApiKey = process.env["OpenAPIKey"];
+const discordKey = process.env["DiscordKey"];
+const openAiOrg = process.env["OpenAIOrg"];
+const CLIENT_ID = process.env["CLIENT_ID"];
+const GUILD_ID = process.env["GUILD_ID"];
+const fs = require("fs");
+
+let voices = [];
+
+while ((file = directory.readSync()) !== null) {
+  const dotIndex = file.name.indexOf(".");
+
+  voices.push(file.name.slice(0, dotIndex));
+}
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -36,6 +40,13 @@ const client = new Client({
 
 const rest = new REST({ version: "10" }).setToken(discordKey);
 
+//Setup OpenAI
+
+const configuration = new Configuration({
+  organization: openAiOrg,
+  apiKey: openApiKey,
+});
+
 function buildSlashCommands() {
   return voices.map((voice) =>
     new SlashCommandBuilder().setName(voice).setDescription("desc")
@@ -43,15 +54,6 @@ function buildSlashCommands() {
 }
 
 const player = createAudioPlayer();
-
-//Setup OpenAI
-
-const { Configuration, OpenAIApi } = require("openai");
-
-const configuration = new Configuration({
-  organization: openAiOrg,
-  apiKey: openApiKey,
-});
 
 const playAudio = (interaction, command) => {
   try {
