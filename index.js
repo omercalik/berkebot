@@ -12,14 +12,14 @@ const { join } = require("node:path");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { REST } = require("@discordjs/rest");
 
-const directory = fs.opendirSync("./voices");
-
 const openApiKey = process.env["OpenAPIKey"];
 const discordKey = process.env["DiscordKey"];
 const openAiOrg = process.env["OpenAIOrg"];
 const CLIENT_ID = process.env["CLIENT_ID"];
 const GUILD_ID = process.env["GUILD_ID"];
 const fs = require("fs");
+
+const directory = fs.opendirSync("./voices");
 
 let voices = [];
 
