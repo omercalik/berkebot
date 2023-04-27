@@ -74,7 +74,7 @@ const playAudio = (interaction, command) => {
       const subscription = connection.subscribe(player);
 
       if (subscription) {
-        setTimeout(() => subscription.unsubscribe(), 10000);
+        setTimeout(() => subscription.unsubscribe(), 100000);
       }
     } else {
       interaction.reply("Message is not in a voice channel!");
